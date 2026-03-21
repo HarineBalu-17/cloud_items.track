@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lost & Found Management System</title>
+    <!-- Modern Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <span class="highlight">Find</span>It
+        </div>
+        <div class="nav-links">
+            <a href="#home">Home</a>
+            <a href="#lost-items">Lost Items</a>
+            <a href="#found-items">Found Items</a>
+        </div>
+        <div class="nav-actions">
+            <!-- Show login/signup if not logged in, else show user profile/logout -->
+            <button id="authBtn" class="btn-outline">Login / Sign Up</button>
+            <button id="logoutBtn" class="btn-outline hidden">Logout</button>
+        </div>
+    </nav>
+
+    <header id="home" class="hero">
+        <div class="hero-content">
+            <h1>Lost something? <br> Or found something?</h1>
+            <p>We help you reunite with your lost belongings. A simple, premium, and community-driven platform to report lost and found items securely.</p>
+            <div class="hero-buttons">
+                <button id="reportLostBtn" class="btn-primary">Report Lost Item</button>
+                <button id="reportFoundBtn" class="btn-secondary">Report Found Item</button>
+            </div>
+        </div>
+        <div class="hero-graphic">
+            <img src="hero.png" alt="FindIt - Lost and Found" class="hero-img" />
+        </div>
+    </header>
+
+    <main class="container">
+        <!-- Search Section - Two visual cards -->
+        <section class="search-section">
+            <h2 class="search-title">Find Your Item</h2>
+            <p class="search-subtitle">Search across all lost and found reports instantly</p>
+            <div class="search-cards">
+
+                <!-- Search by Location Card -->
+                <div class="search-card" id="searchLocationCard">
+                    <div class="search-card-banner">
+                        <img src="search_location.png" alt="Search by Location" />
+                        <div class="search-card-overlay location-overlay">
+                            <div class="search-card-icon">📍</div>
+                            <h3>Search by Location</h3>
+                            <p>Find items by where they were lost or found</p>
+                        </div>
+                    </div>
+                    <div class="search-card-body">
+                        <div class="search-wrapper">
+                            <input type="text" id="searchLocation" class="search-input" placeholder="e.g. Library, Cafeteria, Block A..." />
+                            <button class="search-btn" onclick="filterByLocation()">
+                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Search by Item Card -->
+                <div class="search-card" id="searchItemCard">
+                    <div class="search-card-banner">
+                        <img src="search_item.png" alt="Search by Item Name" />
+                        <div class="search-card-overlay item-overlay">
+                            <div class="search-card-icon">🔍</div>
+                            <h3>Search by Item</h3>
+                            <p>Find items by their name or description</p>
+                        </div>
+                    </div>
+                    <div class="search-card-body">
+                        <div class="search-wrapper">
+                            <input type="text" id="searchItem" class="search-input" placeholder="e.g. Headphones, Blue Bag, Keys..." />
+                            <button class="search-btn" onclick="filterByItem()">
+                                <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- Active filter display -->
+            <div id="activeFilter" class="active-filter hidden">
+                <span id="filterText"></span>
+                <button onclick="clearSearch()" class="clear-filter-btn">✕ Clear</button>
+            </div>
+        </section>
+
+
+        <!-- Lost Items Section -->
+        <section id="lost-items" class="dashboard-section">
+            <div class="section-banner">
+                <img src="lost_banner.png" alt="Lost Items" class="section-banner-img" />
+                <div class="section-banner-overlay">
+                    <h2>Lost Items</h2>
+                    <p>Browse items that others have reported missing</p>
+                </div>
+            </div>
+            <div class="section-sub-header">
+                <span class="badge" id="lostCount">0</span>
+                <span class="badge-label">items reported lost</span>
+            </div>
+            <div class="items-grid" id="lostItemsGrid">
+                <div class="empty-state">Loading lost items...</div>
+            </div>
+        </section>
+
+        <!-- Found Items Section -->
+        <section id="found-items" class="dashboard-section">
+            <div class="section-banner">
+                <img src="found_banner.png" alt="Found Items" class="section-banner-img" />
+                <div class="section-banner-overlay found-overlay">
+                    <h2>Found Items</h2>
+                    <p>Browse items that kind people have handed in</p>
+                </div>
+            </div>
+            <div class="section-sub-header">
+                <span class="badge found-badge" id="foundCount">0</span>
+                <span class="badge-label">items reported found</span>
+            </div>
+            <div class="items-grid" id="foundItemsGrid">
+                <div class="empty-state">Loading found items...</div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Report Modal -->
+    <div id="reportModal" class="modal hidden">
+        <div class="modal-content glass-panel">
+            <span class="close-btn" id="closeReportModal">&times;</span>
+            <h2 id="modalTitle">Report Item</h2>
+            <form id="reportForm" class="styled-form">
+                <input type="hidden" id="reportType" value="lost">
+                
+                <div class="form-group">
+                    <label for="itemName">Item Name</label>
+                    <input type="text" id="itemName" required placeholder="e.g. Blue Backpack">
+                </div>
+
+                <div class="form-group">
+                    <label for="itemDescription">Description</label>
+                    <textarea id="itemDescription" required placeholder="Provide distinguishing details..."></textarea>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group half">
+                        <label for="itemLocation">Location</label>
+                        <input type="text" id="itemLocation" required placeholder="e.g. Library, 2nd Floor">
+                    </div>
+                    <div class="form-group half">
+                        <label for="itemDate">Date</label>
+                        <input type="date" id="itemDate" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="contactInfo">Contact Information</label>
+                    <input type="text" id="contactInfo" required placeholder="Phone number or email">
+                </div>
+
+                <div class="form-group file-upload">
+                    <label for="itemImage" class="file-label">Upload Image (Optional)</label>
+                    <input type="file" id="itemImage" accept="image/*">
+                </div>
+
+                <button type="submit" class="btn-primary w-full" id="submitReportBtn">Submit Report</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Auth Modal for Login/Signup -->
+    <div id="authModal" class="modal hidden">
+        <div class="modal-content glass-panel auth-panel">
+            <span class="close-btn" id="closeAuthModal">&times;</span>
+            <div class="auth-tabs">
+                <button class="auth-tab active" id="tabLogin">Login</button>
+                <button class="auth-tab" id="tabSignup">Sign Up</button>
+            </div>
+            <form id="authForm" class="styled-form">
+
+                <!-- Signup-only fields (hidden during login) -->
+                <div class="form-group signup-only hidden">
+                    <label for="fullName">Full Name</label>
+                    <input type="text" id="fullName" placeholder="e.g. Harine RB" autocomplete="name">
+                </div>
+                <div class="form-group signup-only hidden">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" placeholder="e.g. harine_2817" autocomplete="username">
+                </div>
+
+                <!-- Shared fields -->
+                <div class="form-group">
+                    <label for="email">Email ID</label>
+                    <input type="email" id="email" required placeholder="you@example.com" autocomplete="email">
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" required placeholder="••••••••" autocomplete="current-password">
+                    <!-- Password strength hint (visible only on signup) -->
+                    <div id="passwordHint" class="password-hint hidden">
+                        <span id="hintLength" class="hint-item">✗ Min. 8 characters</span>
+                        <span id="hintUpper" class="hint-item">✗ Uppercase letter</span>
+                        <span id="hintNumber" class="hint-item">✗ Number (0-9)</span>
+                        <span id="hintSpecial" class="hint-item">✗ Special character (!@#$%)</span>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn-primary w-full" id="submitAuthBtn">Login</button>
+                <p id="authMessage" class="form-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notificationToast" class="toast hidden"></div>
+
+    <!-- Load Firebase Script globally -->
+    <script type="module" src="app.js"></script>
+</body>
+</html>
