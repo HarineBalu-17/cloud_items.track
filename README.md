@@ -52,6 +52,7 @@ Simply open index.html in your browser or use a "Live Server" extension in VS Co
 **Project Structure**
 
 Plaintext
+
 ├── index.html          # Main application structure & Modals
 ├── styles.css          # Glassmorphism UI & Animations
 ├── app.js              # Firebase logic & Frontend interactions
