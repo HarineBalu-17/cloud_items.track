@@ -1,4 +1,5 @@
 **Lost & Found Management System**
+
 FindIt is a premium, cloud-based web application designed to help communities reunite with their lost belongings. Built with a modern dark-themed UI, it features real-time search, secure authentication, and seamless image uploads.
 
 **Features**
